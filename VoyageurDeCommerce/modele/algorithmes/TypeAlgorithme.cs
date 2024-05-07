@@ -6,6 +6,7 @@
         ALGOEXEMPLE,
         CROISSANT,
         PLUSPROCHEVOISIN,
-        INSERTIONPROCHE
+        INSERTIONPROCHE,
+        DIJKSTRA
     }
 }

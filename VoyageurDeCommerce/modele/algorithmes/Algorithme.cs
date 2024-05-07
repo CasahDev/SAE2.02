@@ -50,6 +50,4 @@ namespace VoyageurDeCommerce.modele.algorithmes
         /// <param name="listeLieux">Liste des lieux à considérer</param>
         public abstract void Executer(List<Lieu> listeLieux, List<Route> listeRoute);
     }
-
-    //test
 }
