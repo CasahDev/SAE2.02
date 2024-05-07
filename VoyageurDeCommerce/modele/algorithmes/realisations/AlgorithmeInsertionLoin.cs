@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using VoyageurDeCommerce.modele.distances;
 using VoyageurDeCommerce.modele.lieux;
 
@@ -20,10 +21,15 @@ namespace VoyageurDeCommerce.modele.algorithmes.realisations
             FloydWarshall.calculerDistances(listeLieux,listeRoute);
             
             this.nonVisites = listeLieux;
-            GetFarestCouple(listeLieux,listeRoute);
+            GetFarthestCouple(listeLieux);
+
+            while (this.nonVisites != null)
+            {
+                
+            }
         }
 
-        private void GetFarestCouple(List<Lieu> listeLieux, List<Route> listeRoute)
+        private void GetFarthestCouple(List<Lieu> listeLieux)
         {
             int distanceMax = 0;
             Lieu depart = null;
@@ -43,6 +49,30 @@ namespace VoyageurDeCommerce.modele.algorithmes.realisations
             }
             Tournee.Add(depart);
             Tournee.Add(arrivee);
+            this.nonVisites.Remove(depart);
+            this.nonVisites.Remove(arrivee);
+        }
+
+        private int DistanceFromTournee(List<Lieu> listeLieux,Lieu sommet)
+        {
+            List<int> distances = new List<int>();
+            List<Lieu> couple = new List<Lieu>();
+            for (int i = 0; i < listeLieux.Count-2; i++)
+            {
+                couple[0] = listeLieux[i];
+                couple[1] = listeLieux[i + 1];
+                distances.Add(DistanceFromCouple(sommet,couple));
+            }
+
+            couple[0] = listeLieux[listeLieux.Count - 1];
+            couple[1] = listeLieux[0];
+            distances.Add(DistanceFromCouple(sommet,couple));
+        }
+
+        private int DistanceFromCouple(Lieu sommet, List<Lieu> couple)
+        {
+            return FloydWarshall.Distance(sommet, couple[0]) + FloydWarshall.Distance(sommet, couple[1]) -
+                   FloydWarshall.Distance(couple[0], couple[1]);
         }
     }
 }
