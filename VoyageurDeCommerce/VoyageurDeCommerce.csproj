@@ -154,6 +154,7 @@
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
     <Resource Include="icon.ico" />
+    <Content Include=".gitignore" />
     <Content Include="ressources\GrapheSimple1.gph">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>

@@ -8,6 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
+[assembly: System.Windows.Resources.AssemblyAssociatedContentFileAttribute(".gitignore")]
 [assembly: System.Windows.Resources.AssemblyAssociatedContentFileAttribute("ressources/graphesimple1.gph")]
 [assembly: System.Windows.Resources.AssemblyAssociatedContentFileAttribute("ressources/graphesimple2.gph")]
 

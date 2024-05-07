@@ -16,10 +16,8 @@ namespace VoyageurDeCommerce.modele.algorithmes.realisations
 
             FloydWarshall.calculerDistances(listeLieux, listeRoute);
 
-            Lieu depart;
-            Lieu arrivee;
-
-            GetFarestCouple(listeLieux, out depart, out arrivee);
+            Lieu depart = listeLieux[0];
+            Lieu arrivee = GetFarest(listeLieux, depart);
             List<Lieu> nonVisitee = new List<Lieu>(listeLieux);
             nonVisitee.Remove(depart);
 
@@ -78,23 +76,21 @@ namespace VoyageurDeCommerce.modele.algorithmes.realisations
             return index;
         }
 
-        private void GetFarestCouple(List<Lieu> listeLieux, out Lieu depart, out Lieu arrivee)
+        private Lieu GetFarest(List<Lieu> listeLieux, Lieu depart)
         {
             depart = listeLieux[0];
-            arrivee = listeLieux[1];
+            Lieu arrivee = listeLieux[1];
             int distanceMax = FloydWarshall.Distance(depart, arrivee);
             for (int i = 0; i < listeLieux.Count; i++)
             {
-                for (int j = i+1; j < listeLieux.Count; j++)
+                if (FloydWarshall.Distance(listeLieux[i], listeLieux[i]) > distanceMax)
                 {
-                    if (FloydWarshall.Distance(listeLieux[i], listeLieux[j]) > distanceMax)
-                    {
-                        distanceMax = FloydWarshall.Distance(listeLieux[i], listeLieux[j]);
-                        depart = listeLieux[i];
-                        arrivee = listeLieux[j];
-                    }
+                    distanceMax = FloydWarshall.Distance(depart, listeLieux[i]);
+                    arrivee = listeLieux[i];
                 }
             }
+
+            return arrivee;
         }
     }
 }
