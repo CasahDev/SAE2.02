@@ -31,6 +31,10 @@ namespace VoyageurDeCommerce.modele.algorithmes
                     algo = new AlgorithmePlusProcheVoisin();
                     break;
 
+                case TypeAlgorithme.INSERTIONPROCHE:
+                    algo = new AlgorithmeInsertionProche();
+                    break;
+
                 default: throw new ExceptionAlgorithme("Vous n'avez pas modifié la fabrique des algorithmes !");
             }
 

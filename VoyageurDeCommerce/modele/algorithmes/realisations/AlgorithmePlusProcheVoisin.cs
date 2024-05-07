@@ -16,12 +16,17 @@ namespace VoyageurDeCommerce.modele.algorithmes.realisations
             sw.Start();
 
             FloydWarshall.calculerDistances(listeLieux, listeRoute);
-
-            Lieu aVisiter = listeLieux[0];
-
             List<Lieu> nonVisitee = new List<Lieu>(listeLieux);
 
-            Console.WriteLine(listeLieux == nonVisitee);
+            Tournee.Add(listeLieux[0]);
+            nonVisitee.RemoveAt(0);
+
+            sw.Stop();
+            NotifyPropertyChanged("Tournee");
+            sw.Start();
+
+            Lieu aVisiter = listeLieux[1];
+
 
             while (aVisiter != null)
             {
