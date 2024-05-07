@@ -22,11 +22,7 @@ namespace VoyageurDeCommerce.modele.algorithmes.realisations
             
             this.nonVisites = listeLieux;
             GetFarthestCouple(listeLieux);
-
-            while (this.nonVisites != null)
-            {
-                
-            }
+            
         }
 
         private void GetFarthestCouple(List<Lieu> listeLieux)
@@ -52,7 +48,7 @@ namespace VoyageurDeCommerce.modele.algorithmes.realisations
             this.nonVisites.Remove(depart);
             this.nonVisites.Remove(arrivee);
         }
-
+        
         private int DistanceFromTournee(List<Lieu> listeLieux,Lieu sommet)
         {
             List<int> distances = new List<int>();
@@ -67,12 +63,34 @@ namespace VoyageurDeCommerce.modele.algorithmes.realisations
             couple[0] = listeLieux[listeLieux.Count - 1];
             couple[1] = listeLieux[0];
             distances.Add(DistanceFromCouple(sommet,couple));
+            return distances.Min();
         }
 
         private int DistanceFromCouple(Lieu sommet, List<Lieu> couple)
         {
             return FloydWarshall.Distance(sommet, couple[0]) + FloydWarshall.Distance(sommet, couple[1]) -
                    FloydWarshall.Distance(couple[0], couple[1]);
+        }
+
+        private Lieu FarthestFromTournee(List<Lieu> listeLieux)
+        {
+            Lieu result = null;
+            int max = 0;
+            while (this.nonVisites != null)
+            {
+                foreach (Lieu lieu in listeLieux)
+                {
+                    if (DistanceFromTournee(listeLieux,lieu)>max)
+                    {
+                        max = DistanceFromTournee(listeLieux,lieu);
+                        result = lieu;
+                    }
+
+                    this.nonVisites.Remove(lieu);
+                }
+            }
+
+            return result;
         }
     }
 }
