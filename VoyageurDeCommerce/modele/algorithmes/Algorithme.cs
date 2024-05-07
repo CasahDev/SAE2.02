@@ -41,7 +41,7 @@ namespace VoyageurDeCommerce.modele.algorithmes
         /// </summary>
         public void Reset()
         {
-            this.tournee = new Tournee();
+            tournee = new Tournee();
         }
 
 

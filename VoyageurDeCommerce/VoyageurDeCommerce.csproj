@@ -74,6 +74,7 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="modele\algorithmes\realisations\AlgorithmeCroissant.cs" />
+    <Compile Include="modele\algorithmes\realisations\AlgorithmeInsertionLoin.cs" />
     <Compile Include="modele\algorithmes\realisations\AlgorithmeInsertionProche.cs" />
     <Compile Include="modele\algorithmes\realisations\AlgorithmePlusProcheVoisin.cs" />
     <Compile Include="modele\algorithmes\realisations\AlgorithmeDijkstra.cs" />
@@ -155,6 +156,7 @@
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
     <Resource Include="icon.ico" />
+    <Content Include=".gitignore" />
     <Content Include="ressources\GrapheSimple1.gph">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
