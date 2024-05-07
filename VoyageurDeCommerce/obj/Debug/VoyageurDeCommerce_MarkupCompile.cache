@@ -4,17 +4,17 @@
 winexe
 C#
 .cs
-C:\Users\sacha\Cours\S2.02\Base\VoyageurDeCommerce\obj\Debug\
+C:\Users\oddet\source\repos\SAE2.02\VoyageurDeCommerce\obj\Debug\
 VoyageurDeCommerce
 none
 false
 DEBUG;TRACE
-C:\Users\sacha\Cours\S2.02\Base\VoyageurDeCommerce\App.xaml
+C:\Users\oddet\source\repos\SAE2.02\VoyageurDeCommerce\App.xaml
 2-671181573
 21808980545
 34-1359857925
 13-1310406943
 vue\composants\PanelTournee.xaml;vue\FenetrePrincipale.xaml;
 
-False
+True
 
