@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using VoyageurDeCommerce.modele.distances;
 using VoyageurDeCommerce.modele.lieux;
@@ -18,11 +19,13 @@ namespace VoyageurDeCommerce.modele.algorithmes.realisations
         /// <param name="listeRoute">Les différentes routes du graphe</param>
         public override void Executer(List<Lieu> listeLieux, List<Route> listeRoute)
         {
+            
             FloydWarshall.calculerDistances(listeLieux,listeRoute);
             
-            this.nonVisites = listeLieux;
+            this.nonVisites = new List<Lieu>(listeLieux);
             GetFarthestCouple(listeLieux);
-            
+            SmallestInsertionTournee(listeLieux);
+
         }
 
         private void GetFarthestCouple(List<Lieu> listeLieux)
@@ -51,19 +54,32 @@ namespace VoyageurDeCommerce.modele.algorithmes.realisations
         
         private int DistanceFromTournee(List<Lieu> listeLieux,Lieu sommet)
         {
-            List<int> distances = new List<int>();
-            List<Lieu> couple = new List<Lieu>();
-            for (int i = 0; i < listeLieux.Count-2; i++)
+            int result;
+            if (listeLieux.Count>2)
             {
-                couple[0] = listeLieux[i];
-                couple[1] = listeLieux[i + 1];
+                List<int> distances = new List<int>();
+                List<Lieu> couple = new List<Lieu>();
+                couple.Add(listeLieux[0]);
+                couple.Add(listeLieux[1]);
+                for (int i = 1; i < listeLieux.Count-2; i++)
+                {
+                    couple[0] = listeLieux[i];
+                    couple[1] = listeLieux[i+1];
+                    distances.Add(DistanceFromCouple(sommet,couple));
+                }
+
+                couple[0] = listeLieux[listeLieux.Count - 1];
+                couple[1] = listeLieux[0];
                 distances.Add(DistanceFromCouple(sommet,couple));
+                result = distances.Min();
+            }
+            else
+            {
+                result = DistanceFromCouple(sommet, listeLieux);
             }
 
-            couple[0] = listeLieux[listeLieux.Count - 1];
-            couple[1] = listeLieux[0];
-            distances.Add(DistanceFromCouple(sommet,couple));
-            return distances.Min();
+            return result;
+
         }
 
         private int DistanceFromCouple(Lieu sommet, List<Lieu> couple)
@@ -92,5 +108,21 @@ namespace VoyageurDeCommerce.modele.algorithmes.realisations
 
             return result;
         }
+
+        private void SmallestInsertionTournee(List<Lieu> listeLieux)
+        {
+            int minDist = Tournee.Distance;
+            Tournee tourneeTest = new Tournee(Tournee);
+
+            for (int i = 0; i < tourneeTest.ListeLieux.Count; i++)
+            {
+                tourneeTest.ListeLieux.Insert(i,FarthestFromTournee(listeLieux));
+                if (tourneeTest.Distance < minDist)
+                {
+                    minDist = tourneeTest.Distance;
+                    Tournee = tourneeTest;
+                }
+            }
+        } 
     }
 }
