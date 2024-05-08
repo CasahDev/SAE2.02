@@ -9,6 +9,8 @@
 //------------------------------------------------------------------------------
 
 [assembly: System.Windows.Resources.AssemblyAssociatedContentFileAttribute(".gitignore")]
+[assembly: System.Windows.Resources.AssemblyAssociatedContentFileAttribute("obj/debug/vue/composants/paneltournee.baml")]
+[assembly: System.Windows.Resources.AssemblyAssociatedContentFileAttribute("obj/debug/vue/fenetreprincipale.baml")]
 [assembly: System.Windows.Resources.AssemblyAssociatedContentFileAttribute("ressources/graphesimple1.gph")]
 [assembly: System.Windows.Resources.AssemblyAssociatedContentFileAttribute("ressources/graphesimple2.gph")]
 

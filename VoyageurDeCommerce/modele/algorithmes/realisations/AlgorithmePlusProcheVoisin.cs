@@ -16,36 +16,40 @@ namespace VoyageurDeCommerce.modele.algorithmes.realisations
             sw.Start();
 
             FloydWarshall.calculerDistances(listeLieux, listeRoute);
-            List<Lieu> nonVisitee = new List<Lieu>(listeLieux);
+            List<Lieu> notVisited = new List<Lieu>(listeLieux);
 
             Tournee.Add(listeLieux[0]);
-            nonVisitee.RemoveAt(0);
+            notVisited.RemoveAt(0);
 
             sw.Stop();
             NotifyPropertyChanged("Tournee");
             sw.Start();
 
-            Lieu aVisiter = listeLieux[1];
+            Lieu toVisit = listeLieux[1];
+            Lieu lastVisited = Tournee.ListeLieux[Tournee.ListeLieux.Count - 1];
 
 
-            while (aVisiter != null)
+            while (notVisited.Count != 0)
             {
-                Lieu lieu = aVisiter;
-                aVisiter = null;
-                nonVisitee.Remove(lieu);
-                Tournee.Add(lieu);
+                toVisit = notVisited[0];
+
+                int min = FloydWarshall.Distance(lastVisited, toVisit);
+                foreach (var neighbor in notVisited)
+                {
+                    int d = FloydWarshall.Distance(lastVisited, neighbor);
+                    if (min > d)
+                    {
+                        min = d;
+                        toVisit = neighbor;
+                    }
+                }
+
+                lastVisited = toVisit;
+                notVisited.Remove(toVisit);
+                Tournee.Add(toVisit);
                 sw.Stop();
                 NotifyPropertyChanged("Tournee");
                 sw.Start();
-
-                int min = FloydWarshall.Distance(lieu, nonVisitee[1]);
-                foreach (var voisin in nonVisitee)
-                {
-                    if (min > FloydWarshall.Distance(lieu, voisin))
-                    {
-                        aVisiter = voisin;
-                    }
-                }
 
             }
             sw.Stop();

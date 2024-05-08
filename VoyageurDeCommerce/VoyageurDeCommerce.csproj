@@ -157,6 +157,8 @@
     </None>
     <Resource Include="icon.ico" />
     <Content Include=".gitignore" />
+    <Content Include="obj\Debug\vue\composants\PanelTournee.baml" />
+    <Content Include="obj\Debug\vue\FenetrePrincipale.baml" />
     <Content Include="ressources\GrapheSimple1.gph">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
