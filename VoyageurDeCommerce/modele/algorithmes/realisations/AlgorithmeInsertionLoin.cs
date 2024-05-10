@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Windows.Documents;
 using VoyageurDeCommerce.modele.distances;
 using VoyageurDeCommerce.modele.lieux;
 
@@ -9,7 +10,7 @@ namespace VoyageurDeCommerce.modele.algorithmes.realisations
     public class AlgorithmeInsertionLoin : Algorithme
     {
         private List<Lieu> nonVisites;
-        
+        private Stopwatch sw;
         public override string Nom => "Insertion loin";
 
         /// <summary>
@@ -19,37 +20,46 @@ namespace VoyageurDeCommerce.modele.algorithmes.realisations
         /// <param name="listeRoute">Les différentes routes du graphe</param>
         public override void Executer(List<Lieu> listeLieux, List<Route> listeRoute)
         {
-            
+            sw = Stopwatch.StartNew();
+            sw.Start();
             FloydWarshall.calculerDistances(listeLieux,listeRoute);
             
             this.nonVisites = new List<Lieu>(listeLieux);
-            GetFarthestCouple(listeLieux);
-            SmallestInsertionTournee(listeLieux);
 
+            Lieu start = listeLieux[0];
+            
+            this.nonVisites.Remove(start);
+
+            Lieu end = FarthestFromStore(listeLieux);
+            this.nonVisites.Remove(end);
+            
+            Tournee.Add(start);
+            Tournee.Add(end);
+
+            sw.Stop();
+            NotifyPropertyChanged("Tournee");
+            sw.Start();
+            
+            SmallestInsertionTournee();
+
+            TempsExecution = sw.ElapsedMilliseconds;
         }
 
-        private void GetFarthestCouple(List<Lieu> listeLieux)
+        private Lieu FarthestFromStore(List<Lieu> listeLieux)
         {
-            int distanceMax = 0;
-            Lieu depart = null;
-            Lieu arrivee = null;
-            for (int i = 0; i < listeLieux.Count-1; i++)
+            int maxDist = 0;
+            Lieu result = null;
+            foreach (Lieu lieu in listeLieux)
             {
-                for (int j = i+1; j < listeLieux.Count ; j++)
+                if (FloydWarshall.Distance(listeLieux[0],lieu)>maxDist)
                 {
-                    
-                    if (FloydWarshall.Distance(listeLieux[i], listeLieux[j])>distanceMax)
-                    {
-                        distanceMax = FloydWarshall.Distance(listeLieux[i], listeLieux[j]);
-                        depart = listeLieux[i];
-                        arrivee = listeLieux[j];
-                    }
+                    maxDist = FloydWarshall.Distance(listeLieux[0], lieu);
+                    result = lieu;
                 }
             }
-            Tournee.Add(depart);
-            Tournee.Add(arrivee);
-            this.nonVisites.Remove(depart);
-            this.nonVisites.Remove(arrivee);
+
+            this.nonVisites.Remove(result);
+            return result;
         }
         
         private int DistanceFromTournee(List<Lieu> listeLieux,Lieu sommet)
@@ -88,17 +98,18 @@ namespace VoyageurDeCommerce.modele.algorithmes.realisations
                    FloydWarshall.Distance(couple[0], couple[1]);
         }
 
-        private Lieu FarthestFromTournee(List<Lieu> listeLieux)
+        private Lieu FarthestFromTournee()
         {
+            List<Lieu> nVisiteCopy = new List<Lieu>(this.nonVisites);
             Lieu result = null;
             int max = 0;
-            while (this.nonVisites != null)
+            while (this.nonVisites.Count != 0)
             {
-                foreach (Lieu lieu in listeLieux)
+                foreach (Lieu lieu in nVisiteCopy)
                 {
-                    if (DistanceFromTournee(listeLieux,lieu)>max)
+                    if (DistanceFromTournee(nVisiteCopy,lieu)>max)
                     {
-                        max = DistanceFromTournee(listeLieux,lieu);
+                        max = DistanceFromTournee(this.nonVisites,lieu);
                         result = lieu;
                     }
 
@@ -109,20 +120,25 @@ namespace VoyageurDeCommerce.modele.algorithmes.realisations
             return result;
         }
 
-        private void SmallestInsertionTournee(List<Lieu> listeLieux)
+        private void SmallestInsertionTournee()
         {
             int minDist = Tournee.Distance;
             Tournee tourneeTest = new Tournee(Tournee);
 
             for (int i = 0; i < tourneeTest.ListeLieux.Count; i++)
             {
-                tourneeTest.ListeLieux.Insert(i,FarthestFromTournee(listeLieux));
+                tourneeTest.ListeLieux.Insert(i,FarthestFromTournee());
+                sw.Stop();
+                NotifyPropertyChanged("Tournee");
+                sw.Start();
+                
                 if (tourneeTest.Distance < minDist)
                 {
                     minDist = tourneeTest.Distance;
                     Tournee = tourneeTest;
                 }
             }
+            sw.Stop();
         } 
     }
 }
