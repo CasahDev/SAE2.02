@@ -109,7 +109,6 @@ namespace VoyageurDeCommerce.modele.algorithmes.realisations
                     rep = listeLieu[i];
                 }
             }
-            //Console.WriteLine("min = " + min);
             return rep;
         }
 
