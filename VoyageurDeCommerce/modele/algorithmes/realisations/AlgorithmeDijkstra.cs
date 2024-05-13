@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Diagnostics;
 using VoyageurDeCommerce.modele.distances;
 using VoyageurDeCommerce.modele.lieux;
 
@@ -11,9 +12,9 @@ namespace VoyageurDeCommerce.modele.algorithmes.realisations
     /// </summary>
     public class AlgorithmeDijkstra : Algorithme
     {
-        private Dictionary<Lieu, double> distances;
-        private Dictionary<Lieu, bool> estVisite;
-        private Dictionary<Lieu, Lieu> predecesseur;
+        private Dictionary<Lieu, double> _distances;
+        private Dictionary<Lieu, bool> _estVisite;
+        private Dictionary<Lieu, Lieu> _predecesseur;
         
         /// <summary>
         /// Propriété donnant le nom de l'algorithme
@@ -25,9 +26,9 @@ namespace VoyageurDeCommerce.modele.algorithmes.realisations
         /// </summary>
         public AlgorithmeDijkstra()
         {
-            distances = new Dictionary<Lieu, double>();
-            estVisite = new Dictionary<Lieu, bool>();
-            predecesseur = new Dictionary<Lieu, Lieu>(); 
+            _distances = new Dictionary<Lieu, double>();
+            _estVisite = new Dictionary<Lieu, bool>();
+            _predecesseur = new Dictionary<Lieu, Lieu>(); 
         }
         
         /// <summary>
@@ -38,11 +39,11 @@ namespace VoyageurDeCommerce.modele.algorithmes.realisations
         {
             foreach(Lieu l in listeLieux)
             {
-                distances[l] = -1;
-                estVisite[l] = false;
-                predecesseur[l] = null;
+                _distances[l] = Double.PositiveInfinity;
+                _estVisite[l] = false;
+                _predecesseur[l] = null;
             }
-            distances[listeLieux[0]] = 0;
+            _distances[listeLieux[0]] = 0;
         }
         
         /// <summary>
@@ -52,10 +53,10 @@ namespace VoyageurDeCommerce.modele.algorithmes.realisations
         /// <param name="b">Lieu d'arrivée</param>
         private void Relachement(Lieu a, Lieu b)
         {
-            if (distances[a] > (distances[b] + FloydWarshall.Distance(a, b)))
+            if (_distances[b] > _distances[a] + FloydWarshall.Distance(a, b))
             {
-                distances[b] = distances[a] + FloydWarshall.Distance(a, b);
-                predecesseur[b] = a;
+                _distances[b] = _distances[a] + FloydWarshall.Distance(a, b);
+                _predecesseur[b] = a;
             }
         }
 
@@ -70,34 +71,72 @@ namespace VoyageurDeCommerce.modele.algorithmes.realisations
             List<Lieu> voisins = new List<Lieu>();
             foreach (Route r in route)
             {
-                if (lieu.Nom == r.Depart.Nom)
+                if (lieu == r.Depart)
                 {
                     voisins.Add(r.Arrivee);
+                }
+
+                if (lieu == r.Arrivee)
+                {
+                    voisins.Add(r.Depart);
                 }
             }
             return voisins;
         }
         
         /// <summary>
-        /// Méthode qui donne la distance minimaledes lieux
+        /// Méthode qui donne la distance minimale des lieux
         /// </summary>
         /// <param name="listeLieu"></param>
         /// <returns></returns>
         private Lieu Minimum(List<Lieu> listeLieu)
         {
-            Lieu rep = listeLieu[0]; 
-            double min = distances[listeLieu[0]];
-            foreach (Lieu lieu in listeLieu)
+            Lieu rep = listeLieu[1];
+            double min = _distances[rep];
+            foreach (Lieu l in listeLieu)
             {
-                if (distances[lieu] < min && !estVisite[lieu])
+                if (!_estVisite[l])
                 {
-                    min = distances[lieu];
-                    rep = lieu;
+                    rep = l;
+                    min = _distances[l];
                 }
             }
+            for (int i = 0; i < listeLieu.Count(); i++)
+            {
+                if (_distances[listeLieu[i]] < min && !_estVisite[listeLieu[i]])
+                {
+                    min = _distances[listeLieu[i]];
+                    rep = listeLieu[i];
+                }
+            }
+            //Console.WriteLine("min = " + min);
             return rep;
         }
-        
+
+        /// <summary>
+        /// Méthode qui lance l'aglorithme de Dijkstra et calcule les PCC de chaque point par rapport au point de départ
+        /// </summary>
+        /// <param name="listeLieux">La Liste des Lieux</param>
+        /// <param name="listeRoute">La liste des routes</param>
+        private void Dijkstra(List<Lieu> listeLieux, List<Route> listeRoute)
+        {
+            //Initialisation
+            Initialisation(listeLieux);
+
+
+            //Calcul
+            while (_estVisite.ContainsValue(false))
+            {
+                Lieu a = Minimum(listeLieux);
+                _estVisite[a] = true;
+                List<Lieu> voisins = RechercheVoisin(a, listeRoute);
+                foreach (Lieu b in voisins)
+                {
+                    Relachement(a, b);
+                }
+            }
+        }
+
         /// <summary>
         /// Méthode executant l'algorithme
         /// </summary>
@@ -105,26 +144,13 @@ namespace VoyageurDeCommerce.modele.algorithmes.realisations
         /// <param name="listeRoute">La liste des routes</param>
         public override void Executer(List<Lieu> listeLieux, List<Route> listeRoute)
         {
-            //Initialisation
+            Stopwatch sw = Stopwatch.StartNew();
+            sw.Start();
+            
             FloydWarshall.calculerDistances(listeLieux, listeRoute);
-            Initialisation(listeLieux);
-            Lieu a = null;
-            List<Lieu> voisins = null;
-            List<Lieu> keys = new List<Lieu>(distances.Keys);
-            
-            
-            //Calcul
-            while (estVisite.ContainsValue(false))
-            {
-                a = Minimum(keys);
-                estVisite[a] = true;
-                voisins = RechercheVoisin(a, listeRoute);
-                foreach (Lieu b in voisins)
-                {
-                    Relachement(a, b);
-                }
-            }
-            this.NotifyPropertyChanged("Tournee") ;
+            Dijkstra(listeLieux,listeRoute);
+            sw.Stop();
+            this.TempsExecution = sw.ElapsedMilliseconds;
         }
     }
 }
