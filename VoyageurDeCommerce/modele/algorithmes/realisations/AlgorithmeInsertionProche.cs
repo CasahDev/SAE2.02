@@ -12,44 +12,50 @@ namespace VoyageurDeCommerce.modele.algorithmes.realisations
 
         public override void Executer(List<Lieu> listeLieux, List<Route> listeRoute)
         {
+            // Début chrono
             Stopwatch sw = Stopwatch.StartNew();
             sw.Start();
 
             FloydWarshall.calculerDistances(listeLieux, listeRoute);
 
+            // Usine
             Lieu start = listeLieux[0];
             List<Lieu> notVisited = new List<Lieu>(listeLieux);
             notVisited.Remove(start);
 
+            // Lieu le plus éloigné
             Lieu end = GetFarestStore(notVisited, start);
             notVisited.Remove(end);
 
             Tournee.Add(start);
+            sw.Stop();
+            NotifyPropertyChanged("Tournee");
+            sw.Start();
+
             Tournee.Add(end);
             sw.Stop();
             NotifyPropertyChanged("Tournee");
             sw.Start();
 
-            Lieu toVisit = notVisited[0];
-
             while (notVisited.Count != 0)
             {
-                toVisit = notVisited[0];
+                var toVisit = notVisited[0];
 
-                int min = DistanceATournee(toVisit, Tournee.ListeLieux, out int ind);
-                foreach (var edge in notVisited)
+                // Calcule le plus petit écart de distance à la tournée
+                int min = DistanceATournee(toVisit, Tournee.ListeLieux, out _);
+                foreach (var place in notVisited)
                 {
-                    int d = DistanceATournee(edge, Tournee.ListeLieux, out int i);
+                    int d = DistanceATournee(place, Tournee.ListeLieux, out _);
                     if (min > d)
                     {
                         min = d;
-                        toVisit = edge;
+                        toVisit = place;
                     }
                 }
 
+                // Ajoute
                 notVisited.Remove(toVisit);
-                int index;
-                DistanceATournee(toVisit, Tournee.ListeLieux, out index);
+                int distance = DistanceATournee(toVisit, Tournee.ListeLieux, out int index);
                 Tournee.ListeLieux.Insert(index, toVisit);
                 sw.Stop();
                 NotifyPropertyChanged("Tournee");
@@ -93,6 +99,7 @@ namespace VoyageurDeCommerce.modele.algorithmes.realisations
                 {
                     min = d;
                     index = i;
+                    Console.WriteLine(T[i] + " - " + index);
                 }
             }
 

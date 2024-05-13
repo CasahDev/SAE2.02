@@ -156,3 +156,4 @@ D:\BUT\S2-02\Code\VoyageurDeCommerce\obj\Debug\VoyageurDeCommerce.csproj.Generat
 D:\BUT\S2-02\Code\VoyageurDeCommerce\obj\Debug\VoyageurDeCommerce.csproj.CoreCompileInputs.cache
 D:\BUT\S2-02\Code\VoyageurDeCommerce\obj\Debug\VoyageurDeCommerce.exe
 D:\BUT\S2-02\Code\VoyageurDeCommerce\obj\Debug\VoyageurDeCommerce.pdb
+C:\Users\sacha\Cours\S2.02\Base\VoyageurDeCommerce\bin\Debug\ressources\GrapheSimple3.gph
