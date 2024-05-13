@@ -38,6 +38,9 @@ namespace VoyageurDeCommerce.modele.algorithmes
                 case TypeAlgorithme.DIJKSTRA:
                     algo = new AlgorithmeDijkstra();
                     break;
+                case TypeAlgorithme.INSERTIONLOIN:
+                    algo = new AlgorithmeInsertionLoin();
+                    break;
 
                 default: throw new ExceptionAlgorithme("Vous n'avez pas modifié la fabrique des algorithmes !");
             }

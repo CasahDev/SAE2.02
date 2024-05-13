@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using VoyageurDeCommerce.modele.distances;
 using VoyageurDeCommerce.modele.lieux;
@@ -16,37 +17,40 @@ namespace VoyageurDeCommerce.modele.algorithmes.realisations
 
             FloydWarshall.calculerDistances(listeLieux, listeRoute);
 
-            Lieu depart = listeLieux[0];
-            Lieu arrivee = GetFarest(listeLieux, depart);
-            List<Lieu> nonVisitee = new List<Lieu>(listeLieux);
-            nonVisitee.Remove(depart);
+            Lieu start = listeLieux[0];
+            List<Lieu> notVisited = new List<Lieu>(listeLieux);
+            notVisited.Remove(start);
 
-            Tournee.Add(depart);
-            Tournee.Add(arrivee);
+            Lieu end = GetFarestStore(notVisited, start);
+            notVisited.Remove(end);
+
+            Tournee.Add(start);
+            Tournee.Add(end);
             sw.Stop();
             NotifyPropertyChanged("Tournee");
             sw.Start();
 
-            Lieu aVisiter = listeLieux[0];
+            Lieu toVisit = notVisited[0];
 
-
-            while (aVisiter != null)
+            while (notVisited.Count != 0)
             {
-                Lieu lieu = aVisiter;
-                aVisiter = null;
-                nonVisitee.Remove(lieu);
+                toVisit = notVisited[0];
 
-                int min = FloydWarshall.Distance(lieu, nonVisitee[0]);
-                foreach (var voisin in nonVisitee)
+                int min = DistanceATournee(toVisit, Tournee.ListeLieux, out int ind);
+                foreach (var edge in notVisited)
                 {
-                    if (min > FloydWarshall.Distance(lieu, voisin))
+                    int d = DistanceATournee(edge, Tournee.ListeLieux, out int i);
+                    if (min > d)
                     {
-                        aVisiter = voisin;
+                        min = d;
+                        toVisit = edge;
                     }
                 }
 
-                int index = GetIndex(lieu);
-                Tournee.ListeLieux.Insert(index, lieu);
+                notVisited.Remove(toVisit);
+                int index;
+                DistanceATournee(toVisit, Tournee.ListeLieux, out index);
+                Tournee.ListeLieux.Insert(index, toVisit);
                 sw.Stop();
                 NotifyPropertyChanged("Tournee");
                 sw.Start();
@@ -56,41 +60,43 @@ namespace VoyageurDeCommerce.modele.algorithmes.realisations
             TempsExecution = sw.ElapsedMilliseconds;
         }
 
-        private int GetIndex(Lieu lieu)
+        private Lieu GetFarestStore(List<Lieu> listeLieux, Lieu start)
         {
-            int index = Tournee.ListeLieux.Count - 1;
-
-            Tournee.Add(lieu);
-            int dMax = Tournee.Distance;
-            for (int i = 1; i < Tournee.ListeLieux.Count; i++)
+            Lieu end = listeLieux[0];
+            int distanceMax = FloydWarshall.Distance(start, end);
+            for (int i = 1; i < listeLieux.Count; i++)
             {
-                Tournee.ListeLieux.Remove(lieu);
-                Tournee.ListeLieux.Insert(i, lieu);
-                if (dMax > Tournee.Distance)
+                if (FloydWarshall.Distance(start, listeLieux[i]) > distanceMax)
                 {
-                    dMax = Tournee.Distance;
+                    distanceMax = FloydWarshall.Distance(start, listeLieux[i]);
+                    end = listeLieux[i];
+                }
+            }
+
+            return end;
+        }
+
+        private int Distance(Lieu s, Lieu a, Lieu b)
+        {
+            return FloydWarshall.Distance(a, s) + FloydWarshall.Distance(s, b)
+                   - FloydWarshall.Distance(a, b);
+        }
+
+        private int DistanceATournee(Lieu s, List<Lieu> T, out int index)
+        {
+            int min = Distance(s, T[0], T[1]);
+            index = 1;
+            for (int i = 1; i < T.Count; i++)
+            {
+                int d = Distance(s, T[i], T[(i + 1) % T.Count]);
+                if (d < min)
+                {
+                    min = d;
                     index = i;
                 }
             }
 
-            return index;
-        }
-
-        private Lieu GetFarest(List<Lieu> listeLieux, Lieu depart)
-        {
-            depart = listeLieux[0];
-            Lieu arrivee = listeLieux[1];
-            int distanceMax = FloydWarshall.Distance(depart, arrivee);
-            for (int i = 0; i < listeLieux.Count; i++)
-            {
-                if (FloydWarshall.Distance(listeLieux[i], listeLieux[i]) > distanceMax)
-                {
-                    distanceMax = FloydWarshall.Distance(depart, listeLieux[i]);
-                    arrivee = listeLieux[i];
-                }
-            }
-
-            return arrivee;
+            return min;
         }
     }
 }

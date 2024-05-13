@@ -7,6 +7,7 @@
         CROISSANT,
         PLUSPROCHEVOISIN,
         INSERTIONPROCHE,
-        DIJKSTRA
+        DIJKSTRA,
+        INSERTIONLOIN
     }
 }
