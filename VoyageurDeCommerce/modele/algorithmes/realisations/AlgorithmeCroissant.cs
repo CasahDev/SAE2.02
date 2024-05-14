@@ -24,7 +24,7 @@ namespace VoyageurDeCommerce.modele.algorithmes.realisations
                 sw.Start();
             }
             sw.Stop();
-            this.TempsExecution = sw.ElapsedMilliseconds;
+            TempsExecution = sw.ElapsedMilliseconds;
         }
     }
 }
