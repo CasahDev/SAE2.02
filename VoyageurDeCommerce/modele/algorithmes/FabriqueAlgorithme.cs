@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using VoyageurDeCommerce.exception.realisations;
 using VoyageurDeCommerce.modele.algorithmes.realisations;
 using VoyageurDeCommerce.modele.lieux;
@@ -40,6 +41,9 @@ namespace VoyageurDeCommerce.modele.algorithmes
                     break;
                 case TypeAlgorithme.INSERTIONLOIN:
                     algo = new AlgorithmeInsertionLoin();
+                    break;
+                case TypeAlgorithme.RERCHERCHELOCALE:
+                    algo = new AlgorithmeRechercheLocale();
                     break;
 
                 default: throw new ExceptionAlgorithme("Vous n'avez pas modifié la fabrique des algorithmes !");

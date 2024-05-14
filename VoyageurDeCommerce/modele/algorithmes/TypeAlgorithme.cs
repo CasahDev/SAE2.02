@@ -8,6 +8,7 @@
         PLUSPROCHEVOISIN,
         INSERTIONPROCHE,
         DIJKSTRA,
-        INSERTIONLOIN
+        INSERTIONLOIN,
+        RERCHERCHELOCALE
     }
 }
