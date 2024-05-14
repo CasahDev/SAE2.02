@@ -51,11 +51,19 @@ namespace VoyageurDeCommerce.modele.algorithmes.realisations
         /// </summary>
         /// <param name="a">Lieu de départ</param>
         /// <param name="b">Lieu d'arrivée</param>
-        private void Relachement(Lieu a, Lieu b)
+        private void Relachement(Lieu a, Lieu b,List<Route> listeRoute)
         {
-            if (_distances[b] > _distances[a] + FloydWarshall.Distance(a, b))
+            Route rAB = null;
+            foreach (Route r in listeRoute)
             {
-                _distances[b] = _distances[a] + FloydWarshall.Distance(a, b);
+                if ((r.Depart == a || r.Arrivee == a) && (r.Arrivee == b || r.Depart == b))
+                {
+                    rAB = r;
+                }
+            }
+            if (_distances[b] > _distances[a] + rAB.Distance)
+            {
+                _distances[b] = _distances[a] + rAB.Distance;
                 _predecesseur[b] = a;
             }
         }
@@ -131,7 +139,7 @@ namespace VoyageurDeCommerce.modele.algorithmes.realisations
                 List<Lieu> voisins = RechercheVoisin(a, listeRoute);
                 foreach (Lieu b in voisins)
                 {
-                    Relachement(a, b);
+                    Relachement(a, b, listeRoute);
                 }
             }
         }
@@ -145,7 +153,25 @@ namespace VoyageurDeCommerce.modele.algorithmes.realisations
         {
             Stopwatch sw = Stopwatch.StartNew();
             sw.Start();
+
+            List<Lieu> chemin = new List<Lieu>();
+            /*
+            while (chemin.Count < _distances.Count)
+            {
+                double max = _distances.Values.Max();
+                Lieu actuel = _distances[]
+                while (_predecesseur)
+            }
+            */
             
+            foreach (Lieu l in _distances.Keys)
+            {
+                Console.WriteLine($"predeceur de {l} est de {_predecesseur[l]} \t distances de {l} est de {_distances[l]}");
+                Tournee.Add(l);
+                sw.Stop();
+                NotifyPropertyChanged("Tournee");
+                sw.Start();
+            }
             FloydWarshall.calculerDistances(listeLieux, listeRoute);
             Dijkstra(listeLieux,listeRoute);
             sw.Stop();
