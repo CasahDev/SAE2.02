@@ -45,33 +45,33 @@ namespace VoyageurDeCommerce.modele.algorithmes.realisations
             int result = 0;
             
 
-            if (index+1 == listeLieux.Count)
+            if ((index+1) == listeLieux.Count)
             {
-                result = distance + FloydWarshall.Distance(listeLieux[index], listeLieux[index - 1]) +
-                         FloydWarshall.Distance(listeLieux[0], listeLieux[1]) -
-                         FloydWarshall.Distance(listeLieux[index - 1], listeLieux[0]) -
-                         FloydWarshall.Distance(listeLieux[index], listeLieux[0]);
+                result = distance + FloydWarshall.Distance(listeLieux[0], listeLieux[index - 1]) +
+                         FloydWarshall.Distance(listeLieux[index], listeLieux[1]) -
+                         FloydWarshall.Distance(listeLieux[index], listeLieux[0]) -
+                         FloydWarshall.Distance(listeLieux[1], listeLieux[index-1]);
             }
-            else if (index+2 == listeLieux.Count)
+            else if ((index+2) == listeLieux.Count)
             {
-                result = distance + FloydWarshall.Distance(listeLieux[index], listeLieux[index - 1]) +
-                         FloydWarshall.Distance(listeLieux[index + 1], listeLieux[0]) -
-                         FloydWarshall.Distance(listeLieux[index - 1], listeLieux[index + 1]) -
-                         FloydWarshall.Distance(listeLieux[index], listeLieux[index + 1]);
+                result = distance + FloydWarshall.Distance(listeLieux[index + 1], listeLieux[index - 1]) +
+                         FloydWarshall.Distance(listeLieux[index], listeLieux[0]) -
+                         FloydWarshall.Distance(listeLieux[index], listeLieux[index + 1]) -
+                         FloydWarshall.Distance(listeLieux[0], listeLieux[index - 1]);
             }
             else if (index == 0)
             {
-                result = distance + FloydWarshall.Distance(listeLieux[index], listeLieux[listeLieux.Count-1]) +
-                         FloydWarshall.Distance(listeLieux[index + 1], listeLieux[index + 2]) -
-                         FloydWarshall.Distance(listeLieux[listeLieux.Count-1], listeLieux[index + 1]) -
-                         FloydWarshall.Distance(listeLieux[index], listeLieux[index + 1]);
+                result = distance + FloydWarshall.Distance(listeLieux[index + 1], listeLieux[listeLieux.Count-1]) +
+                         FloydWarshall.Distance(listeLieux[index], listeLieux[index + 2]) -
+                         FloydWarshall.Distance(listeLieux[index], listeLieux[index + 1]) -
+                         FloydWarshall.Distance(listeLieux[listeLieux.Count-1], listeLieux[index + 2]);
             }
             else
             {
-                result = distance + FloydWarshall.Distance(listeLieux[index], listeLieux[index - 1]) +
-                         FloydWarshall.Distance(listeLieux[index + 1], listeLieux[index + 2]) -
-                         FloydWarshall.Distance(listeLieux[index - 1], listeLieux[index + 1]) -
-                         FloydWarshall.Distance(listeLieux[index], listeLieux[index + 1]);
+                result = distance + FloydWarshall.Distance(listeLieux[index+1], listeLieux[index - 1]) +
+                         FloydWarshall.Distance(listeLieux[index], listeLieux[index + 2]) -
+                         FloydWarshall.Distance(listeLieux[index], listeLieux[index + 1]) -
+                         FloydWarshall.Distance(listeLieux[index-1], listeLieux[index + 2]);
             }
             return result;
         }
@@ -81,10 +81,10 @@ namespace VoyageurDeCommerce.modele.algorithmes.realisations
 
             int minimum = Tournee.Distance;
             int nvDistance = CalculeDistance(listeLieux, minimum, index);
-            
+            Console.WriteLine($"Distance minimum : {minimum} Nouvelle distance : {nvDistance} Indice : {index}");
+
             if (nvDistance < minimum)
             {
-                Console.WriteLine($"Distance minimum : {minimum} Nouvelle distance : {nvDistance} ");
                 minimum = nvDistance;
                 Exchange(listeLieux, index);
             }
@@ -96,11 +96,11 @@ namespace VoyageurDeCommerce.modele.algorithmes.realisations
         {
 
             Lieu temp;
-            if (index == 0)
+            if (index == listeLieux.Count-1)
             {
                 temp = listeLieux[index];
-                listeLieux[index] = listeLieux[listeLieux.Count - 1];
-                listeLieux[listeLieux.Count - 1] = temp;
+                listeLieux[index] = listeLieux[0];
+                listeLieux[0] = temp;
             }
             else
             {
