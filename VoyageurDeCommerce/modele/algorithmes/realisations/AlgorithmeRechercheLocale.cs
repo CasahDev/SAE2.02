@@ -23,41 +23,36 @@ namespace VoyageurDeCommerce.modele.algorithmes.realisations
 
             
             ChercherVoisine();
-            Console.WriteLine("Ok fin executer");
             Console.WriteLine($"Tournee : {Tournee} distance : {Tournee.Distance}");
 
         }
 
         private void ChercherVoisine()
         {
-            Console.WriteLine("Ok début cherchervoisine");
 
-            int distance = Tournee.Distance;
             List<Lieu> liste = Tournee.ListeLieux;
             
             for (int i = 0; i < Tournee.ListeLieux.Count; i++)
             {
-                Tournee.ListeLieux = TourneeMin(liste, distance, i);
+                TourneeMin(liste, i);
             }
-            Console.WriteLine("Ok fin cherchervoisin");
 
         }
 
         private int CalculeDistance(List<Lieu> listeLieux, int distance, int index)
         {
-            Console.WriteLine("Ok début calculdistance");
 
             int result = 0;
             
 
-            if (index+1 >= listeLieux.Count)
+            if (index+1 == listeLieux.Count)
             {
                 result = distance + FloydWarshall.Distance(listeLieux[index], listeLieux[index - 1]) +
                          FloydWarshall.Distance(listeLieux[0], listeLieux[1]) -
                          FloydWarshall.Distance(listeLieux[index - 1], listeLieux[0]) -
                          FloydWarshall.Distance(listeLieux[index], listeLieux[0]);
             }
-            else if (index+2>=listeLieux.Count)
+            else if (index+2 == listeLieux.Count)
             {
                 result = distance + FloydWarshall.Distance(listeLieux[index], listeLieux[index - 1]) +
                          FloydWarshall.Distance(listeLieux[index + 1], listeLieux[0]) -
@@ -78,32 +73,27 @@ namespace VoyageurDeCommerce.modele.algorithmes.realisations
                          FloydWarshall.Distance(listeLieux[index - 1], listeLieux[index + 1]) -
                          FloydWarshall.Distance(listeLieux[index], listeLieux[index + 1]);
             }
-            Console.WriteLine("Ok fin calculdistance");
             return result;
         }
 
-        private List<Lieu> TourneeMin(List<Lieu> listeLieux, int distance, int index)
+        private void TourneeMin(List<Lieu> listeLieux, int index)
         {
-            Console.WriteLine("Ok début tourneemin");
 
-            int minimum = distance;
-            List<Lieu> result = listeLieux;
-            int nvDistance = CalculeDistance(listeLieux, distance, index);
+            int minimum = Tournee.Distance;
+            int nvDistance = CalculeDistance(listeLieux, minimum, index);
             
             if (nvDistance < minimum)
             {
+                Console.WriteLine($"Distance minimum : {minimum} Nouvelle distance : {nvDistance} ");
                 minimum = nvDistance;
-                result = Exchange(listeLieux, index);
+                Exchange(listeLieux, index);
             }
 
-            Console.WriteLine("Ok fin tourneemin");
 
-            return result;
         }
 
-        private List<Lieu> Exchange(List<Lieu> listeLieux, int index)
+        private void Exchange(List<Lieu> listeLieux, int index)
         {
-            Console.WriteLine("Ok début exchange");
 
             Lieu temp;
             if (index == 0)
@@ -115,12 +105,11 @@ namespace VoyageurDeCommerce.modele.algorithmes.realisations
             else
             {
                 temp = listeLieux[index];
-                listeLieux[index] = listeLieux[index - 1];
-                listeLieux[index - 1] = temp;
+                listeLieux[index] = listeLieux[index + 1];
+                listeLieux[index + 1] = temp;
             }
-            Console.WriteLine("Ok fin exchange");
 
-            return listeLieux;
+            Tournee.ListeLieux = listeLieux;
         }
         
     }
