@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using VoyageurDeCommerce.modele.distances;
 using VoyageurDeCommerce.modele.lieux;
 
@@ -10,21 +11,27 @@ namespace VoyageurDeCommerce.modele.algorithmes.realisations
     /// </summary>
     public class AlgorithmeRechercheLocale : Algorithme
     {
+        private Stopwatch sw;
 
         public override string Nom => "Recherche locale";
         
         public override void Executer(List<Lieu> listeLieux, List<Route> listeRoute)
         {
+            sw = Stopwatch.StartNew();
+            sw.Start();
+            
             FloydWarshall.calculerDistances(listeLieux,listeRoute);
-            Algorithme algo = new AlgorithmePlusProcheVoisin();
+            Algorithme algo = new AlgorithmeCroissant();
             algo.Executer(listeLieux,listeRoute);
             this.Tournee = algo.Tournee;
-            Console.WriteLine($"Tournee : {Tournee} distance : {Tournee.Distance}");
+            sw.Stop();
+            NotifyPropertyChanged("Tournee");
+            sw.Start();
 
             
             ChercherVoisine();
-            Console.WriteLine($"Tournee : {Tournee} distance : {Tournee.Distance}");
-
+            sw.Stop();
+            TempsExecution = sw.ElapsedMilliseconds;
         }
 
         private void ChercherVoisine()
@@ -81,7 +88,6 @@ namespace VoyageurDeCommerce.modele.algorithmes.realisations
 
             int minimum = Tournee.Distance;
             int nvDistance = CalculeDistance(listeLieux, minimum, index);
-            Console.WriteLine($"Distance minimum : {minimum} Nouvelle distance : {nvDistance} Indice : {index}");
 
             if (nvDistance < minimum)
             {
@@ -109,7 +115,11 @@ namespace VoyageurDeCommerce.modele.algorithmes.realisations
                 listeLieux[index + 1] = temp;
             }
 
+            
             Tournee.ListeLieux = listeLieux;
+            sw.Stop();
+            NotifyPropertyChanged("Tournee");
+            sw.Start();
         }
         
     }
