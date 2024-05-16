@@ -17,33 +17,48 @@ namespace VoyageurDeCommerce.modele.algorithmes.realisations
         
         public override void Executer(List<Lieu> listeLieux, List<Route> listeRoute)
         {
+            bool condition = false;
+            int compteur = 0;
+            
             sw = Stopwatch.StartNew();
             sw.Start();
             
             FloydWarshall.calculerDistances(listeLieux,listeRoute);
             Algorithme algo = new AlgorithmeCroissant();
             algo.Executer(listeLieux,listeRoute);
-            this.Tournee = algo.Tournee;
-            sw.Stop();
-            NotifyPropertyChanged("Tournee");
-            sw.Start();
 
-            
-            ChercherVoisine();
+
+            foreach (Lieu lieu in algo.Tournee.ListeLieux)
+            {
+                this.Tournee.ListeLieux.Add(lieu);
+                sw.Stop();
+                NotifyPropertyChanged("Tournee");
+                sw.Start();
+            }
+
+            while (condition == false && compteur < 10)
+            {
+                condition = ChercherVoisine();
+                compteur++;
+            }
             sw.Stop();
             TempsExecution = sw.ElapsedMilliseconds;
+
+            
         }
 
-        private void ChercherVoisine()
+        private bool ChercherVoisine()
         {
 
             List<Lieu> liste = Tournee.ListeLieux;
+            Tournee tournee = new Tournee(Tournee);
             
             for (int i = 0; i < Tournee.ListeLieux.Count; i++)
             {
                 TourneeMin(liste, i);
             }
 
+            return tournee == Tournee;
         }
 
         private int CalculeDistance(List<Lieu> listeLieux, int distance, int index)
