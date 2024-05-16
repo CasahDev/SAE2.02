@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using VoyageurDeCommerce.modele.distances;
 
 namespace VoyageurDeCommerce.modele.lieux
 {
@@ -38,6 +39,12 @@ namespace VoyageurDeCommerce.modele.lieux
         public override string ToString()
         {
             return this.Nom;
+        }
+
+        public int Distance(Lieu a, Lieu b)
+        {
+            return FloydWarshall.Distance(a, this) + FloydWarshall.Distance(this, b)
+                   - FloydWarshall.Distance(a, b);
         }
     }
 }

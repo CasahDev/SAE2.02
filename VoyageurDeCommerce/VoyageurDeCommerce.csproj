@@ -77,7 +77,6 @@
     <Compile Include="modele\algorithmes\realisations\AlgorithmeInsertionLoin.cs" />
     <Compile Include="modele\algorithmes\realisations\AlgorithmeInsertionProche.cs" />
     <Compile Include="modele\algorithmes\realisations\AlgorithmePlusProcheVoisin.cs" />
-    <Compile Include="modele\algorithmes\realisations\AlgorithmeDijkstra.cs" />
     <Compile Include="modele\algorithmes\realisations\AlgorithmeRechercheLocale.cs" />
     <Compile Include="modele\distances\FloydWarshall.cs" />
     <Compile Include="vuemodele\VueModeleHistorique.cs" />

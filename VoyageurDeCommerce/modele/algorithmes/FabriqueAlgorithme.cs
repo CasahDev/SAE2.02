@@ -20,10 +20,6 @@ namespace VoyageurDeCommerce.modele.algorithmes
             Algorithme algo;
             switch (type)
             {
-                case TypeAlgorithme.ALGOEXEMPLE:
-                    algo = new AlgoExemple();
-                    break;
-
                 case TypeAlgorithme.CROISSANT:
                     algo = new AlgorithmeCroissant();
                     break;
@@ -35,13 +31,11 @@ namespace VoyageurDeCommerce.modele.algorithmes
                 case TypeAlgorithme.INSERTIONPROCHE:
                     algo = new AlgorithmeInsertionProche();
                     break;
-                
-                case TypeAlgorithme.DIJKSTRA:
-                    algo = new AlgorithmeDijkstra();
-                    break;
+
                 case TypeAlgorithme.INSERTIONLOIN:
                     algo = new AlgorithmeInsertionLoin();
                     break;
+
                 case TypeAlgorithme.RERCHERCHELOCALE:
                     algo = new AlgorithmeRechercheLocale();
                     break;

@@ -3,11 +3,9 @@
     /// <summary> Enumération des algorithmes </summary>
     public enum TypeAlgorithme
     {
-        ALGOEXEMPLE,
         CROISSANT,
         PLUSPROCHEVOISIN,
         INSERTIONPROCHE,
-        DIJKSTRA,
         INSERTIONLOIN,
         RERCHERCHELOCALE
     }

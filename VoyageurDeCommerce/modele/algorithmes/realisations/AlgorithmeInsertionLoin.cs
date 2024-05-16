@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using VoyageurDeCommerce.modele.distances;
 using VoyageurDeCommerce.modele.lieux;
 
@@ -12,16 +13,18 @@ namespace VoyageurDeCommerce.modele.algorithmes.realisations
 
         public override void Executer(List<Lieu> listeLieux, List<Route> listeRoute)
         {
+            // Début chrono
             Stopwatch sw = Stopwatch.StartNew();
             sw.Start();
 
+            // Calcul distances
             FloydWarshall.calculerDistances(listeLieux, listeRoute);
 
-            Lieu start = listeLieux[0];
+            // Lieux les plus éloignés
             List<Lieu> notVisited = new List<Lieu>(listeLieux);
-            notVisited.Remove(start);
+            GetFarestPlaces(notVisited, out Lieu start, out Lieu end);
 
-            Lieu end = GetFarestStore(notVisited, start);
+            notVisited.Remove(start);
             notVisited.Remove(end);
 
             Tournee.Add(start);
@@ -30,27 +33,27 @@ namespace VoyageurDeCommerce.modele.algorithmes.realisations
             NotifyPropertyChanged("Tournee");
             sw.Start();
 
-            Lieu toVisit = notVisited[0];
-
             while (notVisited.Count != 0)
             {
-                toVisit = notVisited[0];
+                Lieu toVisit = notVisited[0];
 
-                int min = DistanceATournee(toVisit, Tournee.ListeLieux, out int ind);
-                foreach (var edge in notVisited)
+                // Calcule le plus petit écart de distance à la tournée
+                int max = DistanceATournee(toVisit, Tournee.ListeLieux, out int index);
+                foreach (Lieu place in notVisited)
                 {
-                    int d = DistanceATournee(edge, Tournee.ListeLieux, out int i);
-                    if (min > d)
+                    int d = DistanceATournee(place, Tournee.ListeLieux, out int ind);
+                    if (d > max)
                     {
-                        min = d;
-                        toVisit = edge;
+                        toVisit = place;
+                        max = d;
+                        index = ind;
                     }
                 }
 
+                // Ajoute
                 notVisited.Remove(toVisit);
-                int index;
-                DistanceATournee(toVisit, Tournee.ListeLieux, out index);
                 Tournee.ListeLieux.Insert(index, toVisit);
+
                 sw.Stop();
                 NotifyPropertyChanged("Tournee");
                 sw.Start();
@@ -60,43 +63,44 @@ namespace VoyageurDeCommerce.modele.algorithmes.realisations
             TempsExecution = sw.ElapsedMilliseconds;
         }
 
-        private Lieu GetFarestStore(List<Lieu> listeLieux, Lieu start)
+        private void GetFarestPlaces(List<Lieu> listeLieux, out Lieu start, out Lieu end)
         {
-            Lieu end = listeLieux[0];
+            start = listeLieux[0];
+            end = listeLieux[1];
             int distanceMax = FloydWarshall.Distance(start, end);
             for (int i = 1; i < listeLieux.Count; i++)
             {
-                if (FloydWarshall.Distance(start, listeLieux[i]) > distanceMax)
+                for (int j = i + 1; j < listeLieux.Count; j++)
                 {
-                    distanceMax = FloydWarshall.Distance(start, listeLieux[i]);
-                    end = listeLieux[i];
+                    int d = FloydWarshall.Distance(listeLieux[i], listeLieux[j]);
+                    if (d > distanceMax)
+                    {
+                        distanceMax = d;
+                        start = listeLieux[i];
+                        end = listeLieux[j];
+                    }
                 }
+
             }
-
-            return end;
-        }
-
-        private int Distance(Lieu s, Lieu a, Lieu b)
-        {
-            return FloydWarshall.Distance(a, s) + FloydWarshall.Distance(s, b)
-                   - FloydWarshall.Distance(a, b);
         }
 
         private int DistanceATournee(Lieu s, List<Lieu> T, out int index)
         {
-            int max = Distance(s, T[0], T[1]);
-            index = 1;
-            for (int i = 1; i < T.Count; i++)
+            int min = s.Distance(T[0], T[1]);
+            int ind = 1;
+            for (int i = 0; i < Tournee.ListeLieux.Count; i++)
             {
-                int d = Distance(s, T[i], T[(i + 1) % T.Count]);
-                if (d > max)
+                int d = s.Distance(Tournee.ListeLieux[i],
+                    Tournee.ListeLieux[(i + 1) % Tournee.ListeLieux.Count]);
+                if (d < min)
                 {
-                    max = d;
-                    index = i;
+                    min = d;
+                    ind = i + 1;
                 }
             }
 
-            return max;
+            index = ind;
+            return min;
         }
     }
 }
