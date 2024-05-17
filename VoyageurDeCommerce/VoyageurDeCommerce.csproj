@@ -137,7 +137,10 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
-    <Content Include="ressources\GrapheSimple3.gph">
+    <Content Include="ressources\GrapheOctogone.gph">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="ressources\GrapheFrance.gph">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Resource Include="vue\ressources\images\icon.ico" />
